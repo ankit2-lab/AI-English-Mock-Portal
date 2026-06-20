@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI English Mock Test Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen font-sans antialiased">
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <header class="text-center mb-8 border-b border-gray-800 pb-6">
+            <h1 class="text-4xl font-extrabold text-blue-500 tracking-tight mb-2">🎯 AI English Mock Portal</h1>
+            <p class="text-gray-400">Kisi bhi topic ya grammar rule ka custom mock test real-time me generate karein.</p>
+        </header>
+
+        <div id="setup-screen" class="bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50 space-y-6">
+            <div>
+                <label class="block text-sm font-semibold text-gray-300 mb-2">Grammar Topic / Rule:</label>
+                <input type="text" id="quiz-topic" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" placeholder="e.g., Since and For, Each Every Neither Either, Subject-Verb Agreement" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Questions Ki Sankhya:</label>
+                    <select id="question-count" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+                        <option value="10">10 Questions</option>
+                        <option value="20">20 Questions</option>
+                        <option value="30">30 Questions</option>
+                        <option value="40">40 Questions</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">Difficulty Level:</label>
+                    <select id="difficulty-level" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+                        <option value="Easy">Easy (Basics)</option>
+                        <option value="Moderate" selected>Moderate (SSC CGL / Banking Pre)</option>
+                        <option value="Tough">Tough (Mains Level / Tricky)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="generateQuiz()" id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg transition duration-200 shadow-lg transform active:scale-[0.99]">
+                🚀 Generate Custom Quiz
+            </button>
+        </div>
+
+        <div id="loading-screen" class="hidden text-center py-24 space-y-4 bg-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
+            <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-blue-500 mx-auto"></div>
+            <p class="text-xl font-semibold text-gray-200">AI Questions Framework Taiyaar Kar Raha Hai...</p>
+            <p class="text-sm text-gray-400">Aapke specific topic aur difficulty par research chal rahi hai. Kripya 10-15 seconds rukien.</p>
+        </div>
+
+        <div id="quiz-screen" class="hidden bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-6">
+                <span id="quiz-progress" class="text-blue-400 font-bold tracking-wide uppercase text-sm">Question 1 of 10</span>
+                <span class="text-emerald-400 text-xs font-semibold bg-emerald-950/80 border border-emerald-800 px-3 py-1 rounded-full">Live Mock Test</span>
+            </div>
+            
+            <div id="question-container" class="mb-8">
+                <p id="question-text" class="text-xl font-medium text-white mb-6 leading-relaxed bg-gray-900/40 p-4 rounded-lg border border-gray-700/30"></p>
+                <div id="options-container" class="space-y-3.5"></div>
+            </div>
+
+            <div class="flex justify-end border-t border-gray-700 pt-4">
+                <button onclick="nextQuestion()" id="next-btn" class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-bold transition shadow-md" disabled>
+                    Next Question ➡️
+                </button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="hidden space-y-6">
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700/50 text-center">
+                <h2 class="text-3xl font-extrabold text-emerald-400 mb-2">🎉 Test Complete Ho Gaya!</h2>
+                <p class="text-gray-400 mb-6">Niche aapka scorecard aur har swal ki gahri analysis di gayi hai.</p>
+                <div class="inline-block bg-gray-950 px-8 py-4 rounded-2xl border border-gray-800 mb-6">
+                    <span class="text-gray-500 block text-xs font-bold uppercase tracking-widest mb-1">Total Score</span>
+                    <div class="text-5xl font-black text-white"><span id="score-obtained" class="text-blue-500">0</span> / <span id="total-score">0</span></div>
+                </div>
+                <div>
+                    <button onclick="resetQuiz()" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white px-8 py-3 rounded-lg font-bold transition">
+                        🔄 Naya Topic Test Karein
+                    </button>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-blue-400 pl-2 flex items-center gap-2">
+                <span>📊 Detailed Answer Key & Explanation:</span>
+            </h3>
+            <div id="analysis-container" class="space-y-5"></div>
+        </div>
+    </div>
+
+    <script>
+        let quizData = [];
+        let currentQuestionIdx = 0;
+        let userAnswers = [];
+        let score = 0;
+
+        async function generateQuiz() {
+            // ⚠️ BAS IS NEECHE WAALI LINE ME APNI API KEY PASTE KAR DENA BHAI
+            const apiKey = "AQ.Ab8RN6IkPoBd3-Caep-HY5NbJgxaEae0-52zo0-BS0pOcrFaeg"; 
+            
+            const topic = document.getElementById('quiz-topic').value.trim();
+            const count = document.getElementById('question-count').value;
+            const difficulty = document.getElementById('difficulty-level').value;
+
+            if (!apiKey || apiKey === "YAHAN_APNI_API_KEY_DAALEIN") { 
+                alert('Bhai, code me apni Gemini API key daalna bhool gaye ho! Line number 115 check karo.'); 
+                return; 
+            }
+            if (!topic) { alert('Bhai, kis topic par test dena chahte ho? Wo toh type karo!'); return; }
+
+            // UI Mode Switch to Loading
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('loading-screen').classList.remove('hidden');
+
+            const prompt = `You are a premium mock test developer for advanced examinations like SSC CGL, Bank PO, and NDA.
+            Create a highly accurate and clean quiz on the English grammar concept: "${topic}".
+            Total number of multiple-choice questions needed: ${count}.
+            Strict Difficulty benchmark: ${difficulty}.
+
+            Respond ONLY with a valid, clean JSON array of objects. Do not wrap the JSON output inside \`\`\`json or any markdown blocks. No introduction, no summary text. Just raw JSON data.
+
+            Each object in the array must strictly contain these exact four keys:
+            1. "question": (String) The test sentence or question statement. For error spotting, make it structurally complex based on the requested level.
+            2. "options": (Array of 4 strings) 4 distinct choices (A, B, C, D).
+            3. "correctIndex": (Number) The exact index of the correct answer option (0 for A, 1 for B, 2 for C, 3 for D).
+            4. "explanation": (String) A comprehensive and extremely clear step-by-step grammar rule explanation clarifying why that option is correct/incorrect.`;
+
+            const modelsToTry = [
+                'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
+                'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
+                'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+            ];
+
+            let success = false;
+            let lastError = "";
+
+            for (let url of modelsToTry) {
+                if (success) break;
+                try {
+                    const response = await fetch(`${url}?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        lastError = data.error.message;
+                        continue;
+                    }
+
+                    if (data.candidates && data.candidates.length > 0) {
+                        let rawText = data.candidates[0].content.parts[0].text;
+                        rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+                        
+                        quizData = JSON.parse(rawText);
+                        success = true;
+                        break;
+                    }
+                } catch (err) {
+                    lastError = err.message;
+                }
+            }
+
+            if (success) {
+                currentQuestionIdx = 0;
+                userAnswers = [];
+                score = 0;
+                
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('quiz-screen').classList.remove('hidden');
+                showQuestion();
+            } else {
+                alert(`Kuch issue aaya hai, bhai!\n\nDetails: ${lastError}\n\nEk baar check karein ki aapki Key sahi h ya nahi.`);
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('setup-screen').classList.remove('hidden');
+            }
+        }
+
+        function showQuestion() {
+            const currentQuestion = quizData[currentQuestionIdx];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQuestionIdx + 1} of ${quizData.length}`;
+            document.getElementById('question-text').innerText = currentQuestion.question;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left bg-gray-700/80 hover:bg-gray-700 text-white px-5 py-4 rounded-xl border border-gray-600 transition duration-150 focus:outline-none flex items-center gap-3 select-none";
+                
+                const prefix = ['A', 'B', 'C', 'D'][idx];
+                btn.innerHTML = `<span class="bg-gray-900 text-blue-400 font-bold px-2.5 py-1 rounded text-sm border border-gray-700">${prefix}</span> <span class="flex-1">${option}</span>`;
+                
+                btn.onclick = () => selectOption(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            if (currentQuestionIdx === quizData.length - 1) {
+                nextBtn.innerText = "Finish & Analysis 📊";
+            } else {
+                nextBtn.innerText = "Next Question ➡️";
+            }
+        }
+
+        function selectOption(index, selectedButton) {
+            userAnswers[currentQuestionIdx] = index;
+            
+            const buttons = document.getElementById('options-container').children;
+            for(let btn of buttons) {
+                btn.classList.remove('border-blue-500', 'bg-blue-950/50');
+                btn.classList.add('border-gray-600', 'bg-gray-700/80');
+            }
+            selectedButton.classList.remove('border-gray-600', 'bg-gray-700/80');
+            selectedButton.classList.add('border-blue-500', 'bg-blue-950/50');
+            
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIdx < quizData.length - 1) {
+                currentQuestionIdx++;
+                showQuestion();
+            } else {
+                renderEvaluationScreen();
+            }
+        }
+
+        function renderEvaluationScreen() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            score = 0;
+            quizData.forEach((q, idx) => {
+                if(userAnswers[idx] === q.correctIndex) {
+                    score++;
+                }
+            });
+
+            document.getElementById('score-obtained').innerText = score;
+            document.getElementById('total-score').innerText = quizData.length;
+
+            const analysisContainer = document.getElementById('analysis-container');
+            analysisContainer.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const isCorrect = userAnswers[idx] === q.correctIndex;
+                const card = document.createElement('div');
+                card.className = `p-6 rounded-xl border ${isCorrect ? 'bg-green-950/20 border-green-800/60' : 'bg-red-950/20 border-red-900/60'} space-y-4 shadow-md`;
+                
+                const prefixArray = ['A', 'B', 'C', 'D'];
+                const userAnsText = q.options[userAnswers[idx]] ? `${prefixArray[userAnswers[idx]]}. ${q.options[userAnswers[idx]]}` : "Attempt nahi kiya";
+                const correctAnsText = `${prefixArray[q.correctIndex]}. ${q.options[q.correctIndex]}`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-4">
+                        <p class="font-bold text-lg text-white leading-relaxed">Q${idx + 1}: ${q.question}</p>
+                        <span class="px-3 py-1 rounded text-xs font-black uppercase tracking-wider ${isCorrect ? 'bg-green-900/60 text-green-400 border border-green-700' : 'bg-red-900/60 text-red-400 border border-red-700'}">
+                            ${isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm border-t border-b border-gray-700/40 py-3">
+                        <div class="${isCorrect ? 'text-green-400' : 'text-red-400'}">
+                            <span class="text-gray-400 text-xs block uppercase font-bold">Aapka Response</span>
+                            <span class="font-medium">${userAnsText}</span>
+                        </div>
+                        <div class="text-green-400">
+                            <span class="text-gray-400 text-xs block uppercase font-bold">Correct Option</span>
+                            <span class="font-medium">${correctAnsText}</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900/80 p-4 rounded-lg border border-gray-700/60 text-sm leading-relaxed text-gray-300">
+                        <strong class="text-blue-400 flex items-center gap-1.5 mb-1.5">
+                            📚 Grammar Insight & Explanation:
+                        </strong>
+                        <p>${q.explanation}</p>
+                    </div>
+                `;
+                analysisContainer.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
