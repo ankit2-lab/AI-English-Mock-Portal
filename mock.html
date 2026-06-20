@@ -106,7 +106,7 @@
             const difficulty = document.getElementById('difficulty-level').value;
 
             if (!apiKey || apiKey === "YAHAN_APNI_API_KEY_DAALEIN") { 
-                alert('Bhai, code me apni Gemini API key daalna bhool gaye ho! Line number 115 check karo.'); 
+                alert('Bhai, code me apni Gemini API key daalna bhool gaye ho! Pehle key set karo.'); 
                 return; 
             }
             if (!topic) { alert('Bhai, kis topic par test dena chahte ho? Wo toh type karo!'); return; }
@@ -115,18 +115,25 @@
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
 
+            // NEW UNIVERSAL PROMPT FOR ALL ENGLISH TOPICS
             const prompt = `You are a premium mock test developer for advanced examinations like SSC CGL, Bank PO, and NDA.
-            Create a highly accurate and clean quiz on the English grammar concept: "${topic}".
+            Create a highly accurate, clean, and context-appropriate quiz on the English language topic/concept: "${topic}".
             Total number of multiple-choice questions needed: ${count}.
             Strict Difficulty benchmark: ${difficulty}.
+
+            DYNAMIC FORMATTING RULES BASED ON THE USER'S INPUT:
+            1. For READING COMPREHENSION / CLOZE TEST: Generate a high-quality, exam-standard passage first. For EVERY single question object in the array, you MUST prepend the full passage text at the start of the "question" field, followed by two line breaks (\\n\\n) and then the specific question statement (e.g., "[Passage: ...] \\n\\n Q1: What is the author's tone?").
+            2. For SYNONYMS / ANTONYMS / VOCABULARY: Provide a clear word or sentence context in the "question" field, and ensure the 4 options contain clear, non-ambiguous choices appropriate for the requested difficulty level.
+            3. For ERROR SPOTTING / SENTENCE IMPROVEMENT: Provide advanced, structurally complex sentences split into parts or standard options based on competitive exam patterns.
+            4. For GENERAL GRAMMAR (Noun, Pronoun, Preposition, Subject-Verb Agreement, Specific Rules like Each/Every, Since/For): Provide high-yield fill-in-the-blanks or conceptual sentence structure questions.
 
             Respond ONLY with a valid, clean JSON array of objects. Do not wrap the JSON output inside \`\`\`json or any markdown blocks. No introduction, no summary text. Just raw JSON data.
 
             Each object in the array must strictly contain these exact four keys:
-            1. "question": (String) The test sentence or question statement. For error spotting, make it structurally complex based on the requested level.
-            2. "options": (Array of 4 strings) 4 distinct choices (A, B, C, D).
+            1. "question": (String) The exact test statement or sentence. (Must include the full passage text at the top if it is a Reading Comprehension or Cloze Test).
+            2. "options": (Array of 4 strings) Exactly 4 distinct choices (A, B, C, D).
             3. "correctIndex": (Number) The exact index of the correct answer option (0 for A, 1 for B, 2 for C, 3 for D).
-            4. "explanation": (String) A comprehensive and extremely clear step-by-step grammar rule explanation clarifying why that option is correct/incorrect.`;
+            4. "explanation": (String) A comprehensive, step-by-step grammar rule or contextual explanation clarifying why that option is correct and why others are incorrect. Give short hints or rule breakdowns.`;
 
             const modelsToTry = [
                 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
@@ -293,5 +300,4 @@
             document.getElementById('setup-screen').classList.remove('hidden');
         }
     </script>
-</body>
 </html>
