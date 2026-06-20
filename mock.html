@@ -14,80 +14,84 @@
             <p class="text-gray-400">Kisi bhi topic ya grammar rule ka custom mock test real-time me generate karein.</p>
         </header>
 
+        <!-- SETUP SCREEN -->
         <div id="setup-screen" class="bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50 space-y-6">
             <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2">Grammar Topic / Rule:</label>
-                <input type="text" id="quiz-topic" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" placeholder="e.g., Since and For, Each Every Neither Either, Subject-Verb Agreement" />
+                <label class="block text-sm font-semibold text-gray-300 mb-2">📝 Topic / Concept Name</label>
+                <input type="text" id="quiz-topic" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition" placeholder="e.g., Reading Comprehension, Error Spotting, Noun, Synonyms...">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-300 mb-2">Questions Ki Sankhya:</label>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">🔢 Number of Questions</label>
                     <select id="question-count" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
-                        <option value="10">10 Questions</option>
+                        <option value="5">5 Questions</option>
+                        <option value="10" selected>10 Questions</option>
+                        <option value="15">15 Questions</option>
                         <option value="20">20 Questions</option>
-                        <option value="30">30 Questions</option>
-                        <option value="40">40 Questions</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-300 mb-2">Difficulty Level:</label>
+                    <label class="block text-sm font-semibold text-gray-300 mb-2">📊 Difficulty Level</label>
                     <select id="difficulty-level" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
-                        <option value="Easy">Easy (Basics)</option>
-                        <option value="Moderate" selected>Moderate (SSC CGL / Banking Pre)</option>
-                        <option value="Tough">Tough (Mains Level / Tricky)</option>
+                        <option value="Easy">Easy (Basic Concepts)</option>
+                        <option value="Moderate" selected>Moderate (SSC Pre / Clerk Level)</option>
+                        <option value="Hard">Hard (SSC Mains / Bank PO Level)</option>
                     </select>
                 </div>
             </div>
 
-            <button onclick="generateQuiz()" id="generate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg transition duration-200 shadow-lg transform active:scale-[0.99]">
-                🚀 Generate Custom Quiz
+            <button onclick="generateQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-lg shadow-lg hover:shadow-blue-500/20 transition duration-150 transform active:scale-[0.99]">
+                Generate Mock Test 🚀
             </button>
         </div>
 
-        <div id="loading-screen" class="hidden text-center py-24 space-y-4 bg-gray-800 rounded-xl p-6 border border-gray-700/50 shadow-xl">
-            <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-b-4 border-blue-500 mx-auto"></div>
-            <p class="text-xl font-semibold text-gray-200">AI Questions Framework Taiyaar Kar Raha Hai...</p>
-            <p class="text-sm text-gray-400">Aapke specific topic aur difficulty par research chal rahi hai. Kripya 10-15 seconds rukien.</p>
+        <!-- LOADING SCREEN -->
+        <div id="loading-screen" class="hidden bg-gray-800 p-12 rounded-xl shadow-2xl border border-gray-700/50 text-center space-y-4">
+            <div class="animate-spin inline-block w-10 h-10 border-[4px] border-current border-t-transparent text-blue-500 rounded-full" role="status" aria-label="loading"></div>
+            <p class="text-xl font-medium text-white">Bhai, Premium Questions taiyaar ho rahe hain...</p>
+            <p class="text-sm text-gray-400">AI rules aur pattern verify kar raha hai, thoda sa rukiye.</p>
         </div>
 
-        <div id="quiz-screen" class="hidden bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50">
-            <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-6">
-                <span id="quiz-progress" class="text-blue-400 font-bold tracking-wide uppercase text-sm">Question 1 of 10</span>
-                <span class="text-emerald-400 text-xs font-semibold bg-emerald-950/80 border border-emerald-800 px-3 py-1 rounded-full">Live Mock Test</span>
-            </div>
-            
-            <div id="question-container" class="mb-8">
-                <p id="question-text" class="text-xl font-medium text-white mb-6 leading-relaxed bg-gray-900/40 p-4 rounded-lg border border-gray-700/30"></p>
-                <div id="options-container" class="space-y-3.5"></div>
-            </div>
-
-            <div class="flex justify-end border-t border-gray-700 pt-4">
-                <button onclick="nextQuestion()" id="next-btn" class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white px-8 py-3 rounded-lg font-bold transition shadow-md" disabled>
-                    Next Question ➡️
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50 space-y-6">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-4">
+                <span id="quiz-progress" class="text-sm font-bold tracking-wide text-blue-400 uppercase">Question 1 of 10</span>
+                <!-- NEW: Emergency Submit Button on Test Screen -->
+                <button onclick="confirmEarlySubmit()" class="text-xs bg-red-900/60 hover:bg-red-900 text-red-300 px-3 py-1.5 rounded-lg border border-red-700/50 font-semibold transition">
+                    Submit Test 🛑
                 </button>
             </div>
+            
+            <div id="question-text" class="text-xl font-medium text-white leading-relaxed whitespace-pre-line"></div>
+            
+            <div id="options-container" class="grid grid-cols-1 gap-3 pt-2"></div>
+
+            <button id="next-btn" onclick="nextQuestion()" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg transition duration-150">
+                Next Question ➡️
+            </button>
         </div>
 
+        <!-- RESULT SCREEN -->
         <div id="result-screen" class="hidden space-y-6">
-            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700/50 text-center">
-                <h2 class="text-3xl font-extrabold text-emerald-400 mb-2">🎉 Test Complete Ho Gaya!</h2>
-                <p class="text-gray-400 mb-6">Niche aapka scorecard aur har swal ki gahri analysis di gayi hai.</p>
-                <div class="inline-block bg-gray-950 px-8 py-4 rounded-2xl border border-gray-800 mb-6">
-                    <span class="text-gray-500 block text-xs font-bold uppercase tracking-widest mb-1">Total Score</span>
-                    <div class="text-5xl font-black text-white"><span id="score-obtained" class="text-blue-500">0</span> / <span id="total-score">0</span></div>
-                </div>
-                <div>
-                    <button onclick="resetQuiz()" class="bg-gray-700 hover:bg-gray-600 border border-gray-600 text-white px-8 py-3 rounded-lg font-bold transition">
-                        🔄 Naya Topic Test Karein
+            <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700/50 text-center space-y-5">
+                <h2 class="text-3xl font-black text-white">Scorecard 📝</h2>
+                <p class="text-5xl font-black text-blue-500 my-2">
+                    <span id="score-obtained">0</span> / <span id="total-score">0</span>
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <button onclick="resetQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition flex-1 sm:flex-initial">
+                        Naya Test Generate Karein 🔄
+                    </button>
+                    <!-- NEW: Back to Home Button on Scorecard Screen -->
+                    <button onclick="goBackToHome()" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold px-6 py-3 rounded-lg border border-gray-600 transition flex-1 sm:flex-initial">
+                        Back to Home 🏠
                     </button>
                 </div>
             </div>
 
-            <h3 class="text-2xl font-bold text-blue-400 pl-2 flex items-center gap-2">
-                <span>📊 Detailed Answer Key & Explanation:</span>
-            </h3>
-            <div id="analysis-container" class="space-y-5"></div>
+            <h3 class="text-xl font-bold text-gray-300 pl-1">Detailed Analysis & Explanations 📊</h3>
+            <div id="analysis-container" class="space-y-4"></div>
         </div>
     </div>
 
@@ -98,24 +102,22 @@
         let score = 0;
 
         async function generateQuiz() {
-            // ⚠️ BAS IS NEECHE WAALI LINE ME APNI API KEY PASTE KAR DENA BHAI
-            const apiKey = "AQ.Ab8RN6IkPoBd3-Caep-HY5NbJgxaEae0-52zo0-BS0pOcrFaeg"; 
+            // 🔥 JUGAD: Yahan apni dono ALAG-ALAG Gmail ID wali keys paste kar do bhai!
+            const apiKeysPool = [
+                "AQ.Ab8RN6L18E3vkjadjKsR7sudSSLok0x5wqHEdCzRmZOmZOk-Nw",
+                "AQ.Ab8RN6IkPoBd3-Caep-HY5NbJgxaEae0-52zo0-BS0pOcrFaeg"
+            ];
             
             const topic = document.getElementById('quiz-topic').value.trim();
             const count = document.getElementById('question-count').value;
             const difficulty = document.getElementById('difficulty-level').value;
 
-            if (!apiKey || apiKey === "YAHAN_APNI_API_KEY_DAALEIN") { 
-                alert('Bhai, code me apni Gemini API key daalna bhool gaye ho! Pehle key set karo.'); 
-                return; 
-            }
             if (!topic) { alert('Bhai, kis topic par test dena chahte ho? Wo toh type karo!'); return; }
 
             // UI Mode Switch to Loading
             document.getElementById('setup-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
 
-            // NEW UNIVERSAL PROMPT FOR ALL ENGLISH TOPICS
             const prompt = `You are a premium mock test developer for advanced examinations like SSC CGL, Bank PO, and NDA.
             Create a highly accurate, clean, and context-appropriate quiz on the English language topic/concept: "${topic}".
             Total number of multiple-choice questions needed: ${count}.
@@ -144,34 +146,40 @@
             let success = false;
             let lastError = "";
 
-            for (let url of modelsToTry) {
+            for (let apiKey of apiKeysPool) {
                 if (success) break;
-                try {
-                    const response = await fetch(`${url}?key=${apiKey}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
-                        })
-                    });
+                if (!apiKey || apiKey.includes("YAHAN_")) continue; 
 
-                    const data = await response.json();
+                for (let url of modelsToTry) {
+                    try {
+                        const response = await fetch(`${url}?key=${apiKey}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                        });
 
-                    if (data.error) {
-                        lastError = data.error.message;
-                        continue;
+                        const data = await response.json();
+
+                        if (data.error) {
+                            lastError = data.error.message;
+                            if(data.error.message.includes("quota") || data.error.message.includes("429")) {
+                                break; 
+                            }
+                            continue;
+                        }
+
+                        if (data.candidates && data.candidates.length > 0) {
+                            let rawText = data.candidates[0].content.parts[0].text;
+                            rawText = rawText.replace(/```json/g, "").replace(/
+```/g, "").trim();
+                            
+                            quizData = JSON.parse(rawText);
+                            success = true;
+                            break;
+                        }
+                    } catch (err) {
+                        lastError = err.message;
                     }
-
-                    if (data.candidates && data.candidates.length > 0) {
-                        let rawText = data.candidates[0].content.parts[0].text;
-                        rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-                        
-                        quizData = JSON.parse(rawText);
-                        success = true;
-                        break;
-                    }
-                } catch (err) {
-                    lastError = err.message;
                 }
             }
 
@@ -184,7 +192,7 @@
                 document.getElementById('quiz-screen').classList.remove('hidden');
                 showQuestion();
             } else {
-                alert(`Kuch issue aaya hai, bhai!\n\nDetails: ${lastError}\n\nEk baar check karein ki aapki Key sahi h ya nahi.`);
+                alert(`Kuch issue aaya hai, bhai!\n\nDetails: ${lastError}\n\nEk baar check karein ki aapki dono Keys sahi hain ya nahi, ya fir 1 minute baad rukiye.`);
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('setup-screen').classList.remove('hidden');
             }
@@ -206,11 +214,25 @@
                 btn.innerHTML = `<span class="bg-gray-900 text-blue-400 font-bold px-2.5 py-1 rounded text-sm border border-gray-700">${prefix}</span> <span class="flex-1">${option}</span>`;
                 
                 btn.onclick = () => selectOption(idx, btn);
+                
+                // Keep option highlighted if already selected before
+                if(userAnswers[currentQuestionIdx] === idx) {
+                    btn.classList.remove('border-gray-600', 'bg-gray-700/80');
+                    btn.classList.add('border-blue-500', 'bg-blue-950/50');
+                }
+                
                 optionsContainer.appendChild(btn);
             });
 
             const nextBtn = document.getElementById('next-btn');
-            nextBtn.disabled = true;
+            
+            // Allow next even if not selected yet, unless we strictly want to lock it
+            if (userAnswers[currentQuestionIdx] !== undefined) {
+                nextBtn.disabled = false;
+            } else {
+                nextBtn.disabled = true;
+            }
+
             if (currentQuestionIdx === quizData.length - 1) {
                 nextBtn.innerText = "Finish & Analysis 📊";
             } else {
@@ -220,7 +242,6 @@
 
         function selectOption(index, selectedButton) {
             userAnswers[currentQuestionIdx] = index;
-            
             const buttons = document.getElementById('options-container').children;
             for(let btn of buttons) {
                 btn.classList.remove('border-blue-500', 'bg-blue-950/50');
@@ -228,7 +249,6 @@
             }
             selectedButton.classList.remove('border-gray-600', 'bg-gray-700/80');
             selectedButton.classList.add('border-blue-500', 'bg-blue-950/50');
-            
             document.getElementById('next-btn').disabled = false;
         }
 
@@ -239,6 +259,20 @@
             } else {
                 renderEvaluationScreen();
             }
+        }
+
+        // NEW: Function to ask before submitting early
+        function confirmEarlySubmit() {
+            let attempted = userAnswers.filter(a => a !== undefined).length;
+            if(confirm(`Bhai, aapne ${quizData.length} me se sirf ${attempted} questions kiye hain. Kya sach me submit karna chahte ho?`)) {
+                renderEvaluationScreen();
+            }
+        }
+
+        // NEW: Direct Back to Home function
+        function goBackToHome() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
         }
 
         function renderEvaluationScreen() {
@@ -264,7 +298,7 @@
                 card.className = `p-6 rounded-xl border ${isCorrect ? 'bg-green-950/20 border-green-800/60' : 'bg-red-950/20 border-red-900/60'} space-y-4 shadow-md`;
                 
                 const prefixArray = ['A', 'B', 'C', 'D'];
-                const userAnsText = q.options[userAnswers[idx]] ? `${prefixArray[userAnswers[idx]]}. ${q.options[userAnswers[idx]]}` : "Attempt nahi kiya";
+                const userAnsText = q.options[userAnswers[idx]] !== undefined ? `${prefixArray[userAnswers[idx]]}. ${q.options[userAnswers[idx]]}` : "Attempt nahi kiya ❌";
                 const correctAnsText = `${prefixArray[q.correctIndex]}. ${q.options[q.correctIndex]}`;
 
                 card.innerHTML = `
@@ -300,4 +334,5 @@
             document.getElementById('setup-screen').classList.remove('hidden');
         }
     </script>
+</body>
 </html>
