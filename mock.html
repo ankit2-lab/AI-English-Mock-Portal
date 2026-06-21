@@ -102,11 +102,8 @@
         let score = 0;
 
         async function generateQuiz() {
-            // 🔥 JUGAD: Yahan apni dono ALAG-ALAG Gmail ID wali keys paste kar do bhai!
-            const apiKeysPool = [
-                "AQ.Ab8RN6L18E3vkjadjKsR7sudSSLok0x5wqHEdCzRmZOmZOk-Nw",
-                "AQ.Ab8RN6IkPoBd3-Caep-HY5NbJgxaEae0-52zo0-BS0pOcrFaeg"
-            ];
+            // 👇 BHAI, ISS EK LINE ME APNI ASLI "AIzaSy..." WALI KEY PASTE KAR DO
+            const apiKey = "AQ.Ab8RN6J0hj7wJSkli74fP7FJKpoK5waUJ3FmladcrqiCnWlijw";
             
             const topic = document.getElementById('quiz-topic').value.trim();
             const count = document.getElementById('question-count').value;
@@ -139,47 +136,44 @@
 
             const modelsToTry = [
                 'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent',
-                'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
-                'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
+                'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent'
             ];
 
             let success = false;
             let lastError = "";
 
-            for (let apiKey of apiKeysPool) {
-                if (success) break;
-                if (!apiKey || apiKey.includes("YAHAN_")) continue; 
+            if (!apiKey || apiKey.includes("YAHAN_")) {
+                alert("Bhai, pehle apni AIzaSy waali asli key daalo!");
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('setup-screen').classList.remove('hidden');
+                return;
+            }
 
-                for (let url of modelsToTry) {
-                    try {
-                        const response = await fetch(`${url}?key=${apiKey}`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                        });
+            for (let url of modelsToTry) {
+                try {
+                    const response = await fetch(`${url}?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
 
-                        const data = await response.json();
+                    const data = await response.json();
 
-                        if (data.error) {
-                            lastError = data.error.message;
-                            if(data.error.message.includes("quota") || data.error.message.includes("429")) {
-                                break; 
-                            }
-                            continue;
-                        }
-
-                        if (data.candidates && data.candidates.length > 0) {
-                            let rawText = data.candidates[0].content.parts[0].text;
-                            rawText = rawText.replace(/```json/g, "").replace(/
-```/g, "").trim();
-                            
-                            quizData = JSON.parse(rawText);
-                            success = true;
-                            break;
-                        }
-                    } catch (err) {
-                        lastError = err.message;
+                    if (data.error) {
+                        lastError = data.error.message;
+                        continue;
                     }
+
+                    if (data.candidates && data.candidates.length > 0) {
+                        let rawText = data.candidates[0].content.parts[0].text;
+                        rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+                        
+                        quizData = JSON.parse(rawText);
+                        success = true;
+                        break;
+                    }
+                } catch (err) {
+                    lastError = err.message;
                 }
             }
 
@@ -192,7 +186,7 @@
                 document.getElementById('quiz-screen').classList.remove('hidden');
                 showQuestion();
             } else {
-                alert(`Kuch issue aaya hai, bhai!\n\nDetails: ${lastError}\n\nEk baar check karein ki aapki dono Keys sahi hain ya nahi, ya fir 1 minute baad rukiye.`);
+                alert(`Kuch issue aaya hai, bhai!\n\nDetails: ${lastError}\n\nEk baar check karein ki aapki Key sahi hai ya nahi.`);
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('setup-screen').classList.remove('hidden');
             }
@@ -215,7 +209,6 @@
                 
                 btn.onclick = () => selectOption(idx, btn);
                 
-                // Keep option highlighted if already selected before
                 if(userAnswers[currentQuestionIdx] === idx) {
                     btn.classList.remove('border-gray-600', 'bg-gray-700/80');
                     btn.classList.add('border-blue-500', 'bg-blue-950/50');
@@ -226,7 +219,6 @@
 
             const nextBtn = document.getElementById('next-btn');
             
-            // Allow next even if not selected yet, unless we strictly want to lock it
             if (userAnswers[currentQuestionIdx] !== undefined) {
                 nextBtn.disabled = false;
             } else {
@@ -261,7 +253,6 @@
             }
         }
 
-        // NEW: Function to ask before submitting early
         function confirmEarlySubmit() {
             let attempted = userAnswers.filter(a => a !== undefined).length;
             if(confirm(`Bhai, aapne ${quizData.length} me se sirf ${attempted} questions kiye hain. Kya sach me submit karna chahte ho?`)) {
@@ -269,7 +260,6 @@
             }
         }
 
-        // NEW: Direct Back to Home function
         function goBackToHome() {
             document.getElementById('result-screen').classList.add('hidden');
             document.getElementById('setup-screen').classList.remove('hidden');
