@@ -14,7 +14,6 @@
             <p class="text-gray-400">Kisi bhi topic ya grammar rule ka custom mock test real-time me generate karein.</p>
         </header>
 
-        <!-- SETUP SCREEN -->
         <div id="setup-screen" class="bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50 space-y-6">
             <div>
                 <label class="block text-sm font-semibold text-gray-300 mb-2">📝 Topic / Concept Name</label>
@@ -46,18 +45,15 @@
             </button>
         </div>
 
-        <!-- LOADING SCREEN -->
         <div id="loading-screen" class="hidden bg-gray-800 p-12 rounded-xl shadow-2xl border border-gray-700/50 text-center space-y-4">
             <div class="animate-spin inline-block w-10 h-10 border-[4px] border-current border-t-transparent text-blue-500 rounded-full" role="status" aria-label="loading"></div>
             <p class="text-xl font-medium text-white">Bhai, Premium Questions taiyaar ho rahe hain...</p>
             <p class="text-sm text-gray-400">AI rules aur pattern verify kar raha hai, thoda sa rukiye.</p>
         </div>
 
-        <!-- QUIZ SCREEN -->
         <div id="quiz-screen" class="hidden bg-gray-800 p-6 rounded-xl shadow-2xl border border-gray-700/50 space-y-6">
             <div class="flex justify-between items-center border-b border-gray-700 pb-4">
                 <span id="quiz-progress" class="text-sm font-bold tracking-wide text-blue-400 uppercase">Question 1 of 10</span>
-                <!-- NEW: Emergency Submit Button on Test Screen -->
                 <button onclick="confirmEarlySubmit()" class="text-xs bg-red-900/60 hover:bg-red-900 text-red-300 px-3 py-1.5 rounded-lg border border-red-700/50 font-semibold transition">
                     Submit Test 🛑
                 </button>
@@ -72,7 +68,6 @@
             </button>
         </div>
 
-        <!-- RESULT SCREEN -->
         <div id="result-screen" class="hidden space-y-6">
             <div class="bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700/50 text-center space-y-5">
                 <h2 class="text-3xl font-black text-white">Scorecard 📝</h2>
@@ -83,7 +78,6 @@
                     <button onclick="resetQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-lg transition flex-1 sm:flex-initial">
                         Naya Test Generate Karein 🔄
                     </button>
-                    <!-- NEW: Back to Home Button on Scorecard Screen -->
                     <button onclick="goBackToHome()" class="bg-gray-700 hover:bg-gray-600 text-gray-200 font-bold px-6 py-3 rounded-lg border border-gray-600 transition flex-1 sm:flex-initial">
                         Back to Home 🏠
                     </button>
@@ -102,7 +96,7 @@
         let score = 0;
 
         async function generateQuiz() {
-            // 👇 BHAI, ISS EK LINE ME APNI ASLI "AIzaSy..." WALI KEY PASTE KAR DO
+            // 👇 BHAI, ISS EK LINE ME APNI ASLI "AIzaSy..." WALI KEY PASTE KAR DENA
             const apiKey = "AQ.Ab8RN6J0hj7wJSkli74fP7FJKpoK5waUJ3FmladcrqiCnWlijw";
             
             const topic = document.getElementById('quiz-topic').value.trim();
@@ -142,8 +136,8 @@
             let success = false;
             let lastError = "";
 
-            if (!apiKey || apiKey.includes("YAHAN_")) {
-                alert("Bhai, pehle apni AIzaSy waali asli key daalo!");
+            if (!apiKey || apiKey.includes("YourRealKey")) {
+                alert("Bhai, pehle apni AIzaSy waali asli key daalo code me!");
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('setup-screen').classList.remove('hidden');
                 return;
@@ -298,31 +292,4 @@
                             ${isCorrect ? 'Correct' : 'Incorrect'}
                         </span>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm border-t border-b border-gray-700/40 py-3">
-                        <div class="${isCorrect ? 'text-green-400' : 'text-red-400'}">
-                            <span class="text-gray-400 text-xs block uppercase font-bold">Aapka Response</span>
-                            <span class="font-medium">${userAnsText}</span>
-                        </div>
-                        <div class="text-green-400">
-                            <span class="text-gray-400 text-xs block uppercase font-bold">Correct Option</span>
-                            <span class="font-medium">${correctAnsText}</span>
-                        </div>
-                    </div>
-                    <div class="bg-gray-900/80 p-4 rounded-lg border border-gray-700/60 text-sm leading-relaxed text-gray-300">
-                        <strong class="text-blue-400 flex items-center gap-1.5 mb-1.5">
-                            📚 Grammar Insight & Explanation:
-                        </strong>
-                        <p>${q.explanation}</p>
-                    </div>
-                `;
-                analysisContainer.appendChild(card);
-            });
-        }
-
-        function resetQuiz() {
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('setup-screen').classList.remove('hidden');
-        }
-    </script>
-</body>
-</html>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm border-t border-b border-gray-700/40 py-3
